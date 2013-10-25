@@ -13,7 +13,7 @@ var ObjMaybe = function(value, multipleArguments) {
     this.multArgs = multipleArguments;
 };
 
-ObjMaybe.prototype.do = function(fn) {
+ObjMaybe.prototype.mDo = function(fn) {
     if(this.cont && this.value != null) {
         if(this.multArgs){
             var isValid = this.value.indexOf(undefined) == -1
@@ -29,7 +29,7 @@ ObjMaybe.prototype.do = function(fn) {
 };
 
 
-ObjMaybe.prototype.if = function(condition) {
+ObjMaybe.prototype.mIf = function(condition) {
     if(!this.cont) {
         return this;
     }
@@ -42,7 +42,7 @@ ObjMaybe.prototype.if = function(condition) {
     return this;
 };
 
-ObjMaybe.prototype.with = function(key) {
+ObjMaybe.prototype.mGet = function(key) {
     if(!this.cont) {
         return this;
     }
@@ -53,20 +53,18 @@ ObjMaybe.prototype.with = function(key) {
     }
 };
 
-ObjMaybe.prototype.ret = function(key) {
+ObjMaybe.prototype.mRet = function(key) {
     if(!this.cont) {
         return this;
     }
-    if(key) {
-        if(this.value != null) {
-            return this.value[key];
-        }
+    if(key && this.value != null) {
+        return this.value[key];
     } else {
         return this.value;
     }
 };
 
-ObjMaybe.prototype.map = function(fn) {
+ObjMaybe.prototype.mMap = function(fn) {
     if(this.cont && this.value != null) {
         return mo(fn(this.value));
     } else {
@@ -74,7 +72,7 @@ ObjMaybe.prototype.map = function(fn) {
     }
 };
 
-ObjMaybe.prototype.recover = function(val) {
+ObjMaybe.prototype.mRecover = function(val) {
     if(this.value != null) {
         return this;
     } else {
@@ -82,7 +80,7 @@ ObjMaybe.prototype.recover = function(val) {
     }
 };
 
-ObjMaybe.prototype.else = function(condition) {
+ObjMaybe.prototype.mElse = function(condition) {
     if(this.cont) {
         this.cont = false;
         return this;
@@ -93,9 +91,9 @@ ObjMaybe.prototype.else = function(condition) {
     if(arguments.length === 0) {
         return this;
     } else {
-        return this.if(condition)
+        return this.mIf(condition)
     }
-}
+};
 
 function amo(value) {
     return new ArrMaybe(value);
@@ -104,15 +102,15 @@ function amo(value) {
 var ArrMaybe = function(value) {
     this.value = value;
     this.cont = true;
-}
+};
 
-ArrMaybe.prototype.do = function(fn) {
+ArrMaybe.prototype.mDo = function(fn) {
     if(!this.cont){
         return this;
     }
 
     if(fn instanceof Function && this.value instanceof Array){
-        for(var i in this.value) {
+        for(var i = 0; i < this.value.length; i++) {
             fn(this.value[i]);
         }
     }

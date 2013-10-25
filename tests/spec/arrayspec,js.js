@@ -1,6 +1,6 @@
 describe("Array Monad Tests", function() {
     describe("Amo Tests", function() {
-        it("Should create a monad with array value", function() {
+        it("Should create a monad mGet array value", function() {
             var result = amo([1,2,3]);
             expect(result.value.length).toBe(3);
             expect(result.cont).toBe(true);
@@ -21,7 +21,7 @@ describe("Array Monad Tests", function() {
         });
 
         it("Should perform operation on every item in list", function() {
-            var result = amo(arr).do(spy);
+            var result = amo(arr).mDo(spy);
             expect(spy).toHaveBeenCalledWith(1);
             expect(spy).toHaveBeenCalledWith(2);
             expect(spy).toHaveBeenCalledWith(3);
@@ -31,14 +31,14 @@ describe("Array Monad Tests", function() {
         });
 
         it("Should not perform operation if list is undefined", function() {
-            var result = amo().do(spy);
+            var result = amo().mDo(spy);
             expect(spy).not.toHaveBeenCalled();
             expect(result.value).toBeUndefined();
             expect(result.cont).toBe(true);
         });
 
         it("Should not perform operation if list is empty", function() {
-            var result = amo([]).do(spy);
+            var result = amo([]).mDo(spy);
             expect(spy).not.toHaveBeenCalled();
             expect(result.value).not.toBeUndefined();
             expect(result.value.length).toBe(0);
@@ -48,7 +48,7 @@ describe("Array Monad Tests", function() {
         it("Should not perform operation if execution is stopped", function() {
             var monad = amo(arr);
             monad.cont = false;
-            var result = monad.do(spy);
+            var result = monad.mDo(spy);
             expect(spy).not.toHaveBeenCalled();
             expect(result.value).toBe(arr);
             expect(result.cont).toBe(false);

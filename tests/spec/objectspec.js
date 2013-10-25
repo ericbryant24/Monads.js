@@ -4,13 +4,13 @@ describe("Object Monads Tests", function() {
     };
 
     describe("Mo Tests", function() {
-        it("Should work with a single value", function() {
+        it("Should work mGet a single value", function() {
             var result = mo(1);
             expect(result.value).toBe(1);
             expect(result.cont).toBe(true);
         });
 
-        it("Should work with multiple values", function() {
+        it("Should work mGet multiple values", function() {
             var result = mo(1,2,3,4);
             expect(result.value.length).toBe(4);
             expect(result.cont).toBe(true);
@@ -20,45 +20,45 @@ describe("Object Monads Tests", function() {
 
     describe("Ret Tests", function() {
         it("Should return the value stored in it", function() {
-            expect(mo("value").ret()).toBe("value");
+            expect(mo("value").mRet()).toBe("value");
         });
 
 
         it("Should return undefined but not error", function() {
-            expect(mo().ret()).toBeUndefined();
+            expect(mo().mRet()).toBeUndefined();
         });
 
-        it("Should not execute if execution is stopped", function() {
+        it("Should not execute mIf execution is stopped", function() {
             var monad = mo(testObject);
             monad.cont = false;
-            var result = monad.ret(function(o){ return o.testValue });
-            expect(result.value).not.toBeUndefined()
+            var result = monad.mRet(function(o){ return o.testValue });
+            expect(result.value).not.toBeUndefined();
             expect(result.cont).toBe(false);
             expect(result.value).not.toBe(testObject.testValue);
-        })
+        });
 
-        it("Should return an array if multivalue parameter is used", function() {
-            var result = mo(1,2,3).ret();
+        it("Should return an array mIf multivalue parameter is used", function() {
+            var result = mo(1,2,3).mRet();
             expect(result.length).toBe(3);
-        })
+        });
     });
 
     describe("Map Tests", function() {
         it("Should return the value requested", function() {
-            var result = mo(testObject).map(function(obj) { return obj.testValue});
+            var result = mo(testObject).mMap(function(obj) { return obj.testValue});
             expect(result.value).toBe("test");
         });
 
         it("Should return undefined but not error", function() {
-            var result = mo(testObject).map(function(obj) { return obj.notTestValue});
+            var result = mo(testObject).mMap(function(obj) { return obj.notTestValue});
             expect(result.value).toBeUndefined();
         });
 
-        it("Should not execute if execution is stopped", function() {
+        it("Should not execute mIf execution is stopped", function() {
             var monad = mo(testObject);
             monad.cont = false;
-            var result = monad.map(function(o){ return o.testValue });
-            expect(result.value).not.toBeUndefined()
+            var result = monad.mMap(function(o){ return o.testValue });
+            expect(result.value).not.toBeUndefined();
             expect(result.cont).toBe(false);
             expect(result.value).not.toBe(testObject.testValue);
         })
@@ -69,114 +69,114 @@ describe("Object Monads Tests", function() {
         var spy;
         beforeEach(function() {
             spy = jasmine.createSpy("dospy");
-        })
+        });
 
-        it("Should call the 'do' function with the value in the monad", function(){
-            mo(testObject).do(spy);
+        it("Should call the 'do' function mGet the value in the monad", function(){
+            mo(testObject).mDo(spy);
             expect(spy).toHaveBeenCalledWith(testObject);
         });
 
-        it("Should call the 'do' function with the list of arguments supplied", function() {
-            mo(1,2,3,4).do(spy);
+        it("Should call the 'do' function mGet the list of arguments supplied", function() {
+            mo(1,2,3,4).mDo(spy);
             expect(spy).toHaveBeenCalledWith(1,2,3,4);
         });
 
-        it("Should not call the 'do' function if any of the argument list is undefined", function() {
-            mo(1, 2, undefined, 3).do(spy);
+        it("Should not call the 'do' function mIf any of the argument list is undefined", function() {
+            mo(1, 2, undefined, 3).mDo(spy);
             expect(spy).not.toHaveBeenCalled();
         });
 
-        it("Should not be called if monad should not continue", function(){
+        it("Should not be called mIf monad should not continue", function(){
             var monad = mo(1);
             monad.cont = false;
-            monad.do(spy);
+            monad.mDo(spy);
             expect(spy).not.toHaveBeenCalled();
         });
 
-        it("Should maintain value even if it is not called", function() {
+        it("Should maintain value even mIf it is not called", function() {
             var monad = mo(1);
             monad.cont = false;
-            var result = monad.do(spy);
+            var result = monad.mDo(spy);
             expect(spy).not.toHaveBeenCalled();
             expect(result.value).toBe(1);
             expect(result.cont).toBe(false);
         });
 
         it("Should not call the 'do' function value in the monad is not defined", function(){
-            mo(undefined).do(spy);
+            mo(undefined).mDo(spy);
             expect(spy).not.toHaveBeenCalled();
         });
 
         it("Should return the monad after executing the function", function(){
-            var result = mo(testObject).do(spy);
+            var result = mo(testObject).mDo(spy);
             expect(spy).toHaveBeenCalledWith(testObject);
             expect(typeof result).toBe(typeof mo(testObject));
-            expect(result.ret()).toBe(mo(testObject).ret());
+            expect(result.mRet()).toBe(mo(testObject).mRet());
         });
     });
 
     describe("With Tests", function() {
-        it("Should return the value if it is a property on the object", function() {
-            var result = mo(testObject).with("testValue").ret();
+        it("Should return the value mIf it is a property on the object", function() {
+            var result = mo(testObject).mGet("testValue").mRet();
             expect(result).toBe(testObject.testValue);
         });
 
-        it("Should return an empty monad if it is not a property on the object", function() {
-            var result = mo(testObject).with("badTestValue");
-            expect(result.ret()).toBe(mo().ret());
+        it("Should return an empty monad mIf it is not a property on the object", function() {
+            var result = mo(testObject).mGet("badTestValue");
+            expect(result.mRet()).toBe(mo().mRet());
         });
 
-        it("Should not error if there is no property", function() {
+        it("Should not error mIf there is no property", function() {
             var result = mo(testObject)
-                .with("badTestValue")
-                .with("anotherBadValue")
-                .with("moreBadValues");
-            expect(result.ret()).toBe(mo(undefined).ret());
+                .mGet("badTestValue")
+                .mGet("anotherBadValue")
+                .mGet("moreBadValues");
+            expect(result.mRet()).toBe(mo(undefined).mRet());
         });
 
-        it("Should not execute if execution is stopped", function() {
+        it("Should not execute mIf execution is stopped", function() {
             var monad = mo(testObject);
             monad.cont = false;
-            var result = monad.with( "testValue" );
-            expect(result.value).not.toBeUndefined()
+            var result = monad.mGet( "testValue" );
+            expect(result.value).not.toBeUndefined();
             expect(result.cont).toBe(false);
             expect(result.value).not.toBe(testObject.testValue);
         })
     });
 
     describe("Recover Tests", function() {
-        it("Should return the original value if it is defined", function() {
-            var result = mo(testObject.testValue).recover("recover").ret();
+        it("Should return the original value mIf it is defined", function() {
+            var result = mo(testObject.testValue).mRecover("mRecover").mRet();
             expect(result).toBe(testObject.testValue);
         });
 
-        it("Should return the supplied value if it is not defined", function() {
-            var result = mo(undefined).recover("recover").ret();
-            expect(result).toBe("recover");
+        it("Should return the supplied value mIf it is not defined", function() {
+            var result = mo(undefined).mRecover("mRecover").mRet();
+            expect(result).toBe("mRecover");
         });
     });
 
     describe("If tests", function() {
-        it("continues execution if the condition object results in true", function() {
-            var result = mo(1).if(true);
+        it("continues execution mIf the condition object results in true", function() {
+            var result = mo(1).mIf(true);
             expect(result.value).toBe(1);
             expect(result.cont).toBe(true);
         });
 
-        it("continues execution if the condition function results in true", function() {
-            var result = mo(1).if(function() { return true});
+        it("continues execution mIf the condition function results in true", function() {
+            var result = mo(1).mIf(function() { return true});
             expect(result.value).toBe(1);
             expect(result.cont).toBe(true);
         });
 
-        it("Returns the value and stops execution if the condition function results in false", function(){
-            var result = mo(1).if(function() { return false });
+        it("Returns the value and stops execution mIf the condition function results in false", function(){
+            var result = mo(1).mIf(function() { return false });
             expect(result.value).toBe(1);
             expect(result.cont).toBe(false);
         });
 
-        it("Returns the value and stops execution if the condition object is false", function(){
-            var result = mo(1).if(false);
+        it("Returns the value and stops execution mIf the condition object is false", function(){
+            var result = mo(1).mIf(false);
             expect(result.value).toBe(1);
             expect(result.cont).toBe(false);
         });
@@ -186,53 +186,53 @@ describe("Object Monads Tests", function() {
         it("Should restore execution and return the same value", function() {
             var monad = mo(1);
             monad.cont = false;
-            var result = monad.else();
+            var result = monad.mElse();
             expect(result.cont).toBe(true);
             expect(result.value).toBe(1);
         });
 
-        it("Should stop execution if the execution has not previously been stopped", function() {
-            var result = mo(1).else();
+        it("Should stop execution mIf the execution has not previously been stopped", function() {
+            var result = mo(1).mElse();
             expect(result.cont).toBe(false);
             expect(result.value).toBe(1);
 
-            var result = mo(1).else(true);
+            result = mo(1).mElse(true);
             expect(result.cont).toBe(false);
             expect(result.value).toBe(1);
 
-            var result = mo(1).else(function() { return true});
+            result = mo(1).mElse(function() { return true});
             expect(result.cont).toBe(false);
             expect(result.value).toBe(1);
         });
 
-        it("Should restore execution and return the same value if condition object is true", function() {
+        it("Should restore execution and return the same value mIf condition object is true", function() {
             var monad = mo(1);
             monad.cont = false;
-            var result = monad.else(true);
+            var result = monad.mElse(true);
             expect(result.cont).toBe(true);
             expect(result.value).toBe(1);
         });
 
-        it("Should not restore execution but return the same value if condition object is false", function() {
+        it("Should not restore execution but return the same value mIf condition object is false", function() {
             var monad = mo(1);
             monad.cont = false;
-            var result = monad.else(false);
+            var result = monad.mElse(false);
             expect(result.cont).toBe(false);
             expect(result.value).toBe(1);
         });
 
-        it("Should restore execution and return the same value if condition function returns true", function() {
+        it("Should restore execution and return the same value mIf condition function returns true", function() {
             var monad = mo(1);
             monad.cont = false;
-            var result = monad.else(function() { return true});
+            var result = monad.mElse(function() { return true});
             expect(result.cont).toBe(true);
             expect(result.value).toBe(1);
         });
 
-        it("Should not restore execution but return the same value if condition function returns false", function() {
+        it("Should not restore execution but return the same value mIf condition function returns false", function() {
             var monad = mo(1);
             monad.cont = false;
-            var result = monad.else(function() { return false});
+            var result = monad.mElse(function() { return false});
             expect(result.cont).toBe(false);
             expect(result.value).toBe(1);
         });
