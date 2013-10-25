@@ -1,19 +1,11 @@
 function mo(value) {
-    if(typeof value === 'array'){
-        return new ArrMaybe(value)
+    var args = Array.prototype.slice.call(arguments);
+    if(args.length > 1) {
+        return new ObjMaybe(args, true);
     } else {
-        var args = Array.prototype.slice.call(arguments);
-        if(args.length > 1) {
-            return new ObjMaybe(args, true);
-        } else {
-            return new ObjMaybe(value, false);
-        }
+        return new ObjMaybe(value, false);
     }
 }
-
-var ArrMaybe = function(value) {
-    this.value = value;
-};
 
 var ObjMaybe = function(value, multipleArguments) {
     this.value = value;
