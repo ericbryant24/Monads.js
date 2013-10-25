@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/mo.js.iml" filepath="$PROJECT_DIR$/.idea/mo.js.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/monads.js.iml" filepath="$PROJECT_DIR$/.idea/monads.js.iml" />
     </modules>
   </component>
 </project>

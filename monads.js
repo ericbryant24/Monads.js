@@ -78,7 +78,7 @@ ObjMaybe.prototype.map = function(fn) {
     } else {
         return this;
     }
-}
+};
 
 ObjMaybe.prototype.recover = function(val) {
     if(this.value != null) {
@@ -101,13 +101,4 @@ ObjMaybe.prototype.else = function(condition) {
         return this.if(condition)
     }
 }
-
-ArrMaybe.prototype.do = function(fn) {
-    if(this.value != null){
-        for(var i in this.value){
-            fn(this.value[i]);
-        }
-    }
-    return this;
-};
 
