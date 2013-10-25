@@ -36,6 +36,11 @@ describe("Object Monads Tests", function() {
             expect(result.cont).toBe(false);
             expect(result.value).not.toBe(testObject.testValue);
         })
+
+        it("Should return an array if multivalue parameter is used", function() {
+            var result = mo(1,2,3).ret();
+            expect(result.length).toBe(3);
+        })
     });
 
     describe("Map Tests", function() {

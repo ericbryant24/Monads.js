@@ -30,11 +30,13 @@ ObjMaybe.prototype.do = function(fn) {
 
 
 ObjMaybe.prototype.if = function(condition) {
+    if(!this.cont) {
+        return this;
+    }
     if(typeof condition === 'function'
-        && (!this.cont && this.value == null
-        || !condition(this.value))) {
+        && (this.value == null || !condition(this.value))) {
             this.cont = false;
-    } else if(!this.cont || this.value == null || !condition) {
+    } else if(this.value == null || !condition) {
         this.cont = false;
     }
     return this;
@@ -87,6 +89,7 @@ ObjMaybe.prototype.else = function(condition) {
     }
 
     this.cont = true;
+
     if(arguments.length === 0) {
         return this;
     } else {
@@ -94,3 +97,25 @@ ObjMaybe.prototype.else = function(condition) {
     }
 }
 
+function amo(value) {
+    return new ArrMaybe(value);
+}
+
+var ArrMaybe = function(value) {
+    this.value = value;
+    this.cont = true;
+}
+
+ArrMaybe.prototype.do = function(fn) {
+    if(!this.cont){
+        return this;
+    }
+
+    if(fn instanceof Function && this.value instanceof Array){
+        for(var i in this.value) {
+            fn(this.value[i]);
+        }
+    }
+
+    return this;
+};
